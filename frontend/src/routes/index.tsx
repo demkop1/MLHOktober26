@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ArrowRight,
@@ -18,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { interpretReportFn } from "@/lib/interpret.functions";
+import { interpretReport } from "@/lib/api";
 import type { Concept, Interpretation } from "@/lib/report-schema";
 import { cn } from "@/lib/utils";
 
@@ -65,9 +64,9 @@ const STATUS_META: Record<Interpretation["overall_status"], { label: string; ico
 const isFlag = (s: Concept["status"]) => s === "low" || s === "high" || s === "abnormal";
 
 function Index() {
-  const interpret = useServerFn(interpretReportFn);
   const [text, setText] = useState("");
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null); // data URL of an image or PDF
+  const [fileName, setFileName] = useState("");
   const [tab, setTab] = useState("text");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +78,9 @@ function Index() {
 
   const onFile = (f?: File) => {
     if (!f) return;
-    if (f.size > 6_000_000) return setError("Image is too large (max 6 MB).");
+    if (f.size > 10_000_000) return setError("File is too large (max 10 MB).");
+    if (!f.type.startsWith("image/") && f.type !== "application/pdf") return setError("Please choose an image or a PDF.");
+    setFileName(f.name);
     const reader = new FileReader();
     reader.onload = () => setImage(reader.result as string);
     reader.readAsDataURL(f);
@@ -91,7 +92,7 @@ function Index() {
     const useText = tab === "text" ? text : "";
     const useImage = tab === "image" ? image : null;
     try {
-      const r = await interpret({ data: { text: useText || undefined, image: useImage || undefined } });
+      const r = await interpretReport({ text: useText || undefined, file: useImage || undefined });
       setResult(r);
       setSubmittedText(useText);
       setActive(null);
@@ -148,7 +149,7 @@ function Index() {
                 <Tabs value={tab} onValueChange={setTab}>
                   <TabsList className="mb-4">
                     <TabsTrigger value="text"><FileText /> Paste text</TabsTrigger>
-                    <TabsTrigger value="image"><ImageIcon /> Upload photo</TabsTrigger>
+                    <TabsTrigger value="image"><ImageIcon /> Upload photo / PDF</TabsTrigger>
                   </TabsList>
                   <TabsContent value="text">
                     <Textarea
@@ -165,10 +166,14 @@ function Index() {
                     </button>
                   </TabsContent>
                   <TabsContent value="image">
-                    <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
+                    <input ref={fileRef} type="file" accept="image/*,application/pdf" hidden onChange={(e) => onFile(e.target.files?.[0])} />
                     {image ? (
                       <div className="relative overflow-hidden rounded-xl border bg-cream">
-                        <img src={image} alt="Uploaded report" className="max-h-80 w-full object-contain" />
+                        {image.startsWith("data:image/") ? (
+                          <img src={image} alt="Uploaded report" className="max-h-80 w-full object-contain" />
+                        ) : (
+                          <div className="flex min-h-40 items-center justify-center gap-2 p-6 text-sm"><FileText className="size-5" /> {fileName}</div>
+                        )}
                         <Button size="icon" variant="secondary" className="absolute right-2 top-2" onClick={() => setImage(null)}>
                           <X />
                         </Button>
@@ -181,7 +186,7 @@ function Index() {
                         className="flex min-h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed bg-cream text-muted-foreground transition-colors hover:border-sage hover:text-foreground"
                       >
                         <Upload className="size-8" />
-                        <span className="text-sm">Drop a photo of your report, or click to choose</span>
+                        <span className="text-sm">Drop a photo or PDF of your report, or click to choose</span>
                       </button>
                     )}
                   </TabsContent>
@@ -200,8 +205,10 @@ function Index() {
               </div>
               {submittedText ? (
                 <HighlightedReport text={submittedText} concepts={result.concepts} onPick={focusConcept} />
-              ) : image ? (
+              ) : image?.startsWith("data:image/") ? (
                 <img src={image} alt="Your report" className="w-full rounded-xl border" />
+              ) : image ? (
+                <div className="flex items-center gap-2 rounded-xl border bg-cream p-6 text-sm"><FileText className="size-5" /> {fileName}</div>
               ) : null}
             </div>
           )}
