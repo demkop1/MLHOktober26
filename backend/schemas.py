@@ -40,6 +40,25 @@ class Summary(BaseModel):
     questions_for_doctor: list[str] = Field(description="3-5 helpful questions")
 
 
+class TranslatedConcept(BaseModel):
+    plain_name: str
+    explanation: str
+    why_it_matters: str
+
+
+class TranslatedConcepts(BaseModel):
+    items: list[TranslatedConcept] = Field(description="One translation per input item, in the same order")
+
+
+class TranslatedHeading(BaseModel):
+    title: str
+    summary: str
+
+
+class TranslatedList(BaseModel):
+    items: list[str] = Field(description="One translation per input line, in the same order")
+
+
 # ---- API schemas (mirror frontend/src/lib/report-schema.ts) -------------------------
 
 class Concept(BaseModel):
@@ -69,3 +88,23 @@ class InterpretRequest(BaseModel):
     file: Optional[str] = None
     # optional extra guidance from the user (focus, tone, background...)
     instructions: Optional[str] = None
+    # English name of the language to show the result in, e.g. "French". Omit to keep the report's language.
+    target_language: Optional[str] = Field(None, max_length=40)
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
+class ChatRequest(BaseModel):
+    # the same report the user analysed: pasted text or a PDF data URL (photos have no text to search)
+    text: Optional[str] = None
+    file: Optional[str] = None
+    # conversation so far; the last message must be the user's new question
+    messages: list[ChatMessage] = Field(min_length=1, max_length=40)
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    sources: list[str]

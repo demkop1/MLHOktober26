@@ -11,7 +11,8 @@ from fastapi.concurrency import run_in_threadpool
 
 from documents import prepare_input
 from graph import MODEL, graph
-from schemas import InterpretRequest, Interpretation
+from chat import answer as chat_answer
+from schemas import ChatRequest, ChatResponse, InterpretRequest, Interpretation
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 API_PORT = int(os.getenv("API_PORT", "8001"))
@@ -66,10 +67,28 @@ async def interpret(req: InterpretRequest):
     if not text and not image:
         raise HTTPException(400, "Please provide a report.")
     try:
-        out = await run_in_threadpool(graph.invoke, {"text": text, "image": image, "instructions": (req.instructions or "").strip()})
+        out = await run_in_threadpool(graph.invoke, {"text": text, "image": image, "instructions": (req.instructions or "").strip(),
+                          "target_language": (req.target_language or "").strip()})
     except Exception as e:  # Ollama down, model missing, bad structured output...
         raise HTTPException(502, f"The AI couldn't read this report ({type(e).__name__}). Please try again.")
     return out["result"]
+
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest):
+    if req.messages[-1].role != "user":
+        raise HTTPException(400, "The last message must be a question from the user.")
+    try:
+        text, image = prepare_input(req.text, req.file)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    if not text:
+        raise HTTPException(400, "Chat needs a PDF or pasted text. Photos can't be searched.")
+    try:
+        reply, sources = await run_in_threadpool(chat_answer, text, req.messages)
+    except Exception as e:  # Ollama down, embedding model missing...
+        raise HTTPException(502, f"The AI couldn't answer ({type(e).__name__}). Please try again.")
+    return ChatResponse(answer=reply, sources=sources)
 
 
 if __name__ == "__main__":

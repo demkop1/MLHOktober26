@@ -9,6 +9,7 @@ import {
   Info,
   Leaf,
   ListChecks,
+  MessageCircle,
   RotateCcw,
   Sparkles,
   TriangleAlert,
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ReportChat } from "@/components/ReportChat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { interpretReport } from "@/lib/api";
 import type { Concept, Interpretation } from "@/lib/report-schema";
@@ -39,6 +42,9 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
+// Value is the English language name sent to the backend; "same" keeps the report's own language.
+const LANGUAGES = ["English", "German", "French", "Spanish", "Italian", "Ukrainian", "Russian", "Polish", "Turkish", "Dutch"];
 
 const SAMPLE = `COMPLETE BLOOD COUNT & METABOLIC PANEL
 Patient: J. Doe    Collected: 2026-10-21
@@ -69,12 +75,15 @@ function Index() {
   const [image, setImage] = useState<string | null>(null); // data URL of an image or PDF
   const [fileName, setFileName] = useState("");
   const [instructions, setInstructions] = useState("");
+  const [language, setLanguage] = useState("same");
   const [tab, setTab] = useState("image");
   const [source, setSource] = useState<"image" | "text">("image"); // which input is submitted
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Interpretation | null>(null);
   const [submittedText, setSubmittedText] = useState("");
+  const [chatOpen, setChatOpen] = useState(false);
+  const [submittedFile, setSubmittedFile] = useState<string | undefined>();
   const [active, setActive] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const conceptRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -99,9 +108,11 @@ function Index() {
         text: useText || undefined,
         file: useImage || undefined,
         instructions: instructions.trim() || undefined,
+        targetLanguage: language === "same" ? undefined : language,
       });
       setResult(r);
       setSubmittedText(useText);
+      setSubmittedFile(useImage ?? undefined);
       setActive(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
@@ -214,6 +225,16 @@ function Index() {
                   </TabsContent>
                 </Tabs>
                 {error && <p className="mt-3 rounded-lg bg-status-flag-soft px-3 py-2 text-sm text-status-flag">{error}</p>}
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">Explain in</span>
+                  <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger className="w-48 rounded-xl bg-cream"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="same">Same as my report</SelectItem>
+                      {LANGUAGES.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button size="lg" className="mt-4 w-full rounded-xl" disabled={!canRun || loading} onClick={run}>
                   {loading ? "Reading your report…" : <>Explain my report <ArrowRight /></>}
                 </Button>
@@ -254,6 +275,32 @@ function Index() {
           )}
         </section>
       </main>
+
+      {result?.is_lab_report && (
+        <>
+          <div
+            className={cn(
+              "fixed bottom-24 right-4 z-50 flex h-[min(36rem,calc(100vh-8rem))] w-[min(26rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border bg-card shadow-2xl sm:right-6",
+              !chatOpen && "hidden",
+            )}
+          >
+            <div className="flex items-center justify-between border-b bg-primary px-4 py-3 text-primary-foreground">
+              <span className="flex items-center gap-2 font-semibold"><MessageCircle className="size-4" /> Ask about your report</span>
+              <button onClick={() => setChatOpen(false)} aria-label="Close chat" className="rounded-md p-1 hover:bg-primary-foreground/15">
+                <X className="size-4" />
+              </button>
+            </div>
+            <ReportChat text={submittedText || undefined} file={submittedFile} />
+          </div>
+          <Button
+            size="lg"
+            className="fixed bottom-6 right-4 z-50 rounded-full shadow-lg sm:right-6"
+            onClick={() => setChatOpen((o) => !o)}
+          >
+            {chatOpen ? <X /> : <MessageCircle />} {chatOpen ? "Close" : "Ask questions"}
+          </Button>
+        </>
+      )}
     </div>
   );
 }

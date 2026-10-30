@@ -3,6 +3,7 @@
 Table rows are parsed deterministically when possible; MedGemma extracts them only
 for photos / free text. Statuses are computed from value vs. range, not by the LLM.
 """
+import json
 import operator
 import os
 from typing import Annotated, Optional, TypedDict
@@ -15,7 +16,7 @@ from langgraph.types import Send
 
 from ranges import compute_status, parse_rows
 from schemas import (Concept, Explanation, ExplanationBatch, Extraction, Interpretation,
-                     RawConcept, Summary)
+                     RawConcept, Summary, TranslatedConcept, TranslatedConcepts, TranslatedHeading, TranslatedList)
 
 MODEL = os.getenv("MEDGEMMA_MODEL", "medgemma1.5:4b")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -60,10 +61,16 @@ Give a short title, a warm plain-language overall summary (3-5 sentences), 2-5 s
 and 3-5 useful questions to ask the doctor. Never diagnose; encourage discussing results with the doctor. {lang}"""
 
 
+TRANSLATE_SYS = """You are a medical translator. Translate the given text from {src} into {dst}.
+Keep the meaning, the calm patient-friendly tone and the order and number of items exactly.
+Keep medical abbreviations, numbers, units and test names as they are. Output only the translation."""
+
+
 class State(TypedDict, total=False):
     text: str
     image: Optional[str]
     instructions: str
+    target_language: str
     is_lab_report: bool
     title: str
     language: str
@@ -166,6 +173,70 @@ def summarize(state: State) -> State:
     )}
 
 
+def _attempt(fn, fallback, tries: int = 2):
+    """Small models sometimes return malformed structured output: retry, then keep the original text."""
+    for _ in range(tries):
+        try:
+            return fn()
+        except Exception as e:
+            print(f"[translate] attempt failed: {type(e).__name__}: {str(e)[:300]}", flush=True)
+    return fallback
+
+
+def _translate_batch(concepts: list[Concept], sys: SystemMessage) -> list[TranslatedConcept]:
+    structured = llm.with_structured_output(TranslatedConcepts, method="json_schema")
+    def render(cs):
+        return json.dumps([c.model_dump(include={"plain_name", "explanation", "why_it_matters"}) for c in cs],
+                          ensure_ascii=False)
+    items = structured.invoke([sys, HumanMessage(render(concepts))]).items
+    if len(items) == len(concepts):
+        return items
+    # Small models sometimes drop/merge items: redo one by one.
+    return [structured.invoke([sys, HumanMessage(render([c]))]).items[0] for c in concepts]
+
+
+def translate(state: State) -> State:
+    """Last node: translate the finished result into the user's preferred language.
+
+    Names, values, units and reference ranges stay as written in the report (the UI matches them
+    against the report text); only the explanatory text is translated.
+    """
+    result: Interpretation = state["result"]
+    src, dst = state["language"], state["target_language"]
+    sys = SystemMessage(TRANSLATE_SYS.format(src=src, dst=dst))
+
+    # Several small calls are far more reliable than one big structured answer from a 4B model.
+    def ask(schema, payload):
+        return llm.with_structured_output(schema, method="json_schema").invoke([sys, HumanMessage(payload)])
+
+    def translate_list(items: list[str]) -> list[str]:
+        if not items:
+            return items
+        def go():
+            out = ask(TranslatedList, json.dumps(items, ensure_ascii=False)).items
+            if len(out) != len(items):
+                raise ValueError("item count changed")
+            return out
+        return _attempt(go, items)
+
+    heading = _attempt(lambda: ask(TranslatedHeading, TranslatedHeading(
+        title=result.title, summary=result.summary).model_dump_json()),
+        TranslatedHeading(title=result.title, summary=result.summary))
+    s = {**heading.model_dump(), "key_takeaways": translate_list(result.key_takeaways),
+         "questions_for_doctor": translate_list(result.questions_for_doctor)}
+    concepts = []
+    for i in range(0, len(result.concepts), BATCH_SIZE):
+        batch = result.concepts[i:i + BATCH_SIZE]
+        translated = _attempt(lambda: _translate_batch(batch, sys), None)
+        concepts += batch if translated is None else [c.model_copy(update=t.model_dump()) for c, t in zip(batch, translated)]
+    return {"result": result.model_copy(update={**s, "concepts": concepts})}
+
+
+def needs_translation(state: State) -> str:
+    dst = (state.get("target_language") or "").strip()
+    return "translate" if dst and dst.lower() != state["language"].lower() else END
+
+
 def finish(state: State) -> State:
     """Input wasn't a lab report (or nothing extractable)."""
     return {"result": Interpretation(
@@ -178,10 +249,12 @@ builder = StateGraph(State)
 builder.add_node("prepare", prepare)
 builder.add_node("explain", explain)
 builder.add_node("summarize", summarize)
+builder.add_node("translate", translate)
 builder.add_node("finish", finish)
 builder.add_edge(START, "prepare")
 builder.add_conditional_edges("prepare", fan_out, ["explain", "finish"])
 builder.add_edge("explain", "summarize")
-builder.add_edge("summarize", END)
+builder.add_conditional_edges("summarize", needs_translation, ["translate", END])
+builder.add_edge("translate", END)
 builder.add_edge("finish", END)
 graph = builder.compile()
