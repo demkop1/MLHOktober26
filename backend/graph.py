@@ -33,6 +33,13 @@ def lang_rule(language: str) -> str:
     return f"Write ALL output text in {language}, the language of the lab report."
 
 
+def extra(instructions: str) -> str:
+    """Prompt suffix carrying the user's additional instructions (empty if none)."""
+    if not instructions:
+        return ""
+    return f"\n\nAdditional instructions from the user (follow them where they do not conflict with the rules above):\n{instructions}"
+
+
 EXTRACT_SYS = """You read laboratory reports and extract their content as structured data.
 - is_lab_report: false if the input is clearly not a medical/lab report.
 - title: short name of the report. language: English name of the report's language.
@@ -56,6 +63,7 @@ and 3-5 useful questions to ask the doctor. Never diagnose; encourage discussing
 class State(TypedDict, total=False):
     text: str
     image: Optional[str]
+    instructions: str
     is_lab_report: bool
     title: str
     language: str
@@ -92,7 +100,8 @@ def fan_out(state: State):
     if not state.get("is_lab_report") or not concepts:
         return "finish"
     return [
-        Send("explain", {"start": i, "concepts": concepts[i:i + BATCH_SIZE], "language": state["language"]})
+        Send("explain", {"start": i, "concepts": concepts[i:i + BATCH_SIZE], "language": state["language"],
+                         "instructions": state.get("instructions", "")})
         for i in range(0, len(concepts), BATCH_SIZE)
     ]
 
@@ -106,8 +115,8 @@ def _describe(c: RawConcept) -> str:
             f"Reference range: {c.reference_range or 'n/a'} | Status: {_status(c)}")
 
 
-def _explain_batch(concepts: list[RawConcept], language: str) -> list[Explanation]:
-    sys = SystemMessage(EXPLAIN_SYS.format(lang=lang_rule(language)))
+def _explain_batch(concepts: list[RawConcept], language: str, instructions: str = "") -> list[Explanation]:
+    sys = SystemMessage(EXPLAIN_SYS.format(lang=lang_rule(language)) + extra(instructions))
     items = "\n".join(f"{i + 1}. {_describe(c)}" for i, c in enumerate(concepts))
     out: ExplanationBatch = llm.with_structured_output(ExplanationBatch, method="json_schema").invoke(
         [sys, HumanMessage(items)]
@@ -124,7 +133,7 @@ def _explain_batch(concepts: list[RawConcept], language: str) -> list[Explanatio
 
 def explain(payload: dict) -> State:
     concepts: list[RawConcept] = payload["concepts"]
-    exps = _explain_batch(concepts, payload["language"])
+    exps = _explain_batch(concepts, payload["language"], payload.get("instructions", ""))
     done = [
         (payload["start"] + i, Concept(
             name=c.name, value=c.value, unit=c.unit, reference_range=c.reference_range, status=_status(c),
@@ -148,7 +157,7 @@ def summarize(state: State) -> State:
     if state.get("title"):
         prompt = f"Report: {state['title']}\n{prompt}"
     s: Summary = llm.with_structured_output(Summary, method="json_schema").invoke(
-        [SystemMessage(SUMMARY_SYS.format(lang=lang_rule(state["language"]))), HumanMessage(prompt)]
+        [SystemMessage(SUMMARY_SYS.format(lang=lang_rule(state["language"])) + extra(state.get("instructions", ""))), HumanMessage(prompt)]
     )
     return {"result": Interpretation(
         is_lab_report=True, title=state.get("title") or s.title, overall_status=_overall(concepts),

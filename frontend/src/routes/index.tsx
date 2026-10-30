@@ -8,6 +8,7 @@ import {
   ImageIcon,
   Info,
   Leaf,
+  ListChecks,
   RotateCcw,
   Sparkles,
   TriangleAlert,
@@ -67,7 +68,9 @@ function Index() {
   const [text, setText] = useState("");
   const [image, setImage] = useState<string | null>(null); // data URL of an image or PDF
   const [fileName, setFileName] = useState("");
-  const [tab, setTab] = useState("text");
+  const [instructions, setInstructions] = useState("");
+  const [tab, setTab] = useState("image");
+  const [source, setSource] = useState<"image" | "text">("image"); // which input is submitted
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Interpretation | null>(null);
@@ -89,10 +92,14 @@ function Index() {
   const run = async () => {
     setError(null);
     setLoading(true);
-    const useText = tab === "text" ? text : "";
-    const useImage = tab === "image" ? image : null;
+    const useText = source === "text" ? text : "";
+    const useImage = source === "image" ? image : null;
     try {
-      const r = await interpretReport({ text: useText || undefined, file: useImage || undefined });
+      const r = await interpretReport({
+        text: useText || undefined,
+        file: useImage || undefined,
+        instructions: instructions.trim() || undefined,
+      });
       setResult(r);
       setSubmittedText(useText);
       setActive(null);
@@ -108,7 +115,12 @@ function Index() {
     conceptRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const canRun = tab === "text" ? text.trim().length > 10 : !!image;
+  const canRun = source === "text" ? text.trim().length > 10 : !!image;
+
+  const onTab = (t: string) => {
+    setTab(t);
+    if (t === "text" || t === "image") setSource(t);
+  };
 
   return (
     <div className="min-h-screen">
@@ -140,31 +152,18 @@ function Index() {
                   <span className="text-sage">finally in plain words.</span>
                 </h1>
                 <p className="mt-4 max-w-md text-muted-foreground">
-                  Paste your results or snap a photo. We'll explain the big picture and every term — no medical
+                  Upload your PDF, snap a photo, or paste your results. We'll explain the big picture and every term — no medical
                   dictionary needed.
                 </p>
               </div>
 
               <div className="rounded-3xl border bg-card p-5 shadow-soft">
-                <Tabs value={tab} onValueChange={setTab}>
+                <Tabs value={tab} onValueChange={onTab}>
                   <TabsList className="mb-4">
+                    <TabsTrigger value="image"><ImageIcon /> Upload PDF / photo</TabsTrigger>
                     <TabsTrigger value="text"><FileText /> Paste text</TabsTrigger>
-                    <TabsTrigger value="image"><ImageIcon /> Upload photo / PDF</TabsTrigger>
+                    <TabsTrigger value="instructions"><ListChecks /> Additional instructions</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="text">
-                    <Textarea
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      placeholder="Paste your lab report here…"
-                      className="min-h-64 resize-none rounded-xl bg-cream font-mono text-sm"
-                    />
-                    <button
-                      onClick={() => setText(SAMPLE)}
-                      className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
-                    >
-                      Try a sample report
-                    </button>
-                  </TabsContent>
                   <TabsContent value="image">
                     <input ref={fileRef} type="file" accept="image/*,application/pdf" hidden onChange={(e) => onFile(e.target.files?.[0])} />
                     {image ? (
@@ -189,6 +188,29 @@ function Index() {
                         <span className="text-sm">Drop a photo or PDF of your report, or click to choose</span>
                       </button>
                     )}
+                  </TabsContent>
+                  <TabsContent value="text">
+                    <Textarea
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      placeholder="Paste your lab report here…"
+                      className="min-h-64 resize-none rounded-xl bg-cream font-mono text-sm"
+                    />
+                    <button
+                      onClick={() => setText(SAMPLE)}
+                      className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      Try a sample report
+                    </button>
+                  </TabsContent>
+                  <TabsContent value="instructions">
+                    <Textarea
+                      value={instructions}
+                      onChange={(e) => setInstructions(e.target.value)}
+                      placeholder="Anything the AI should know or focus on? e.g. “I'm 45 and vegetarian, explain my iron results in detail” or “keep it very short”."
+                      className="min-h-64 resize-none rounded-xl bg-cream text-sm"
+                    />
+                    <p className="mt-2 text-sm text-muted-foreground">Optional. Applies to whichever report you upload or paste.</p>
                   </TabsContent>
                 </Tabs>
                 {error && <p className="mt-3 rounded-lg bg-status-flag-soft px-3 py-2 text-sm text-status-flag">{error}</p>}

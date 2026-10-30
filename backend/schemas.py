@@ -67,3 +67,5 @@ class InterpretRequest(BaseModel):
     text: Optional[str] = None
     # data URL (image/* or application/pdf)
     file: Optional[str] = None
+    # optional extra guidance from the user (focus, tone, background...)
+    instructions: Optional[str] = None

@@ -31,18 +31,24 @@ python gemma/demo.py
 
 It sends one question to `medgemma1.5:4b` at `http://localhost:11434` and prints the answer.
 
-## Run the frontend
+## Run the app
 
 ```bash
-cd frontend
-bun install
-bun run dev
+conda activate mlhackathon26
+python backend/main.py
 ```
 
-Open the URL Vite prints (usually http://localhost:5173).
+This starts the API on http://localhost:8001 and also launches the frontend (Vite dev server,
+installing its dependencies with bun on first run). Open **http://localhost:5173**.
 
-The frontend sends reports to `POST /api/interpret` on a backend at `http://localhost:8001`
-(override with `VITE_API_URL`). That backend is not in this repo yet, so until it is added
-the UI will show "Can't reach the LabLens server".
+In the UI, pick a tab, in this order:
 
-Other frontend commands: `bun run build`, `bun run lint`, `bun run test`.
+1. **Upload PDF / photo** – a lab report PDF (or a photo of one)
+2. **Paste text** – paste the report text
+3. **Additional instructions** – optional guidance for the AI, e.g. "keep it very short" or
+   "I'm vegetarian, focus on iron". Applies to whichever report you submit.
+
+Ollama must be running with `medgemma1.5:4b`. Env vars: `API_PORT` (8001), `FRONTEND_PORT` (5173),
+`MEDGEMMA_MODEL`, `OLLAMA_URL`.
+
+Frontend-only commands (from `frontend/`): `bun run dev`, `bun run build`, `bun run lint`, `bun run test`.
