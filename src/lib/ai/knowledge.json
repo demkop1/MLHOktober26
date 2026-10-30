@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "license": "Summaries written for this project (CC BY 4.0). Facts were checked against MedlinePlus pages from the U.S. National Library of Medicine; MedlinePlus text is generally public domain. Links are for further reading. Educational only, not medical advice.",
+  "entries": [
+    {
+      "id": "hemoglobin", "title": "Hemoglobin", "loinc": "718-7",
+      "aliases": ["hemoglobin", "haemoglobin", "hgb", "hb"],
+      "measures": "Hemoglobin is the protein inside red blood cells that carries oxygen from your lungs to the rest of your body.",
+      "whyVaries": ["Levels differ by age, sex and pregnancy.", "Living at high altitude, smoking and how much fluid you've had can shift the number.", "Blood loss, iron or vitamin levels and some long-term conditions can lower it."],
+      "limitations": ["One result is a snapshot; a small difference from the range may not matter.", "Hemoglobin alone doesn't explain why a level is lower or higher."],
+      "doctorQuestions": ["Is this result something we should recheck?", "Do any other results on my report help explain it?", "Could my iron or vitamin levels be relevant?"],
+      "sources": [{ "title": "Hemoglobin Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/hemoglobin-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "hematocrit", "title": "Hematocrit", "loinc": "4544-3",
+      "aliases": ["hematocrit", "haematocrit", "hct"],
+      "measures": "Hematocrit is the percentage of your blood volume made up of red blood cells.",
+      "whyVaries": ["Hydration strongly affects it — being dehydrated can raise it.", "Altitude, sex, age and pregnancy matter.", "It usually moves together with hemoglobin."],
+      "limitations": ["It is read best alongside hemoglobin and red cell counts."],
+      "doctorQuestions": ["Does my hematocrit fit with my hemoglobin result?", "Could hydration have affected this?"],
+      "sources": [{ "title": "Hematocrit Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/hematocrit-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "wbc", "title": "White blood cells (WBC)", "loinc": "6690-2",
+      "aliases": ["white blood", "wbc", "leukocyte", "leucocyte"],
+      "measures": "White blood cells are part of your immune system and help your body respond to infection and inflammation.",
+      "whyVaries": ["Counts can rise briefly with infection, stress, exercise or some medicines.", "Some medicines and conditions can lower the count."],
+      "limitations": ["The total count doesn't show which type of white cell changed; a 'differential' test does that."],
+      "doctorQuestions": ["Would a differential (breakdown of white cell types) be useful?", "Could a recent illness or medicine explain this?"],
+      "sources": [{ "title": "White Blood Count (WBC)", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/white-blood-count-wbc/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "rbc", "title": "Red blood cells (RBC)", "loinc": "789-8",
+      "aliases": ["red blood", "rbc", "erythrocyte"],
+      "measures": "The red blood cell count is the number of oxygen-carrying cells in a sample of your blood.",
+      "whyVaries": ["Hydration, altitude, smoking, sex and age can affect the count.", "Nutrition and blood loss can lower it."],
+      "limitations": ["It is interpreted together with hemoglobin, hematocrit and red cell size measures."],
+      "doctorQuestions": ["How does my red cell count fit with my other blood count results?"],
+      "sources": [{ "title": "Red Blood Cell (RBC) Count", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/red-blood-cell-rbc-count/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "platelets", "title": "Platelets", "loinc": "777-3",
+      "aliases": ["platelet", "plt", "thrombocyte"],
+      "measures": "Platelets are small cell fragments that help your blood form clots to stop bleeding.",
+      "whyVaries": ["Counts can rise temporarily after infection, inflammation or blood loss.", "Some medicines and conditions can lower the count.", "Clumping in the sample tube can make a count look falsely low."],
+      "limitations": ["The count doesn't show how well platelets work."],
+      "doctorQuestions": ["Should this platelet count be repeated?", "Could a recent illness or medicine be related?"],
+      "sources": [{ "title": "Platelet Tests", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/platelet-tests/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "glucose", "title": "Glucose", "loinc": "2345-7",
+      "aliases": ["glucose", "blood sugar"],
+      "measures": "Glucose is the sugar in your blood. It's your body's main source of energy.",
+      "whyVaries": ["It changes a lot with meals, so whether you were fasting matters.", "Stress, illness, sleep and some medicines can raise it."],
+      "limitations": ["A single glucose value shows one moment in time; HbA1c shows a longer average."],
+      "doctorQuestions": ["Was this a fasting test, and does that change how we read it?", "Is an HbA1c test useful for me?"],
+      "sources": [{ "title": "Blood Glucose Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/blood-glucose-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "hba1c", "title": "HbA1c", "loinc": "4548-4",
+      "aliases": ["hba1c", "a1c", "glycated", "glycosylated"],
+      "measures": "HbA1c reflects your average blood sugar over roughly the past two to three months.",
+      "whyVaries": ["Conditions that change how long red blood cells live, like some anemias, can affect the result.", "Recent blood loss or transfusion can affect it."],
+      "limitations": ["It's an average, so it doesn't show day-to-day highs and lows."],
+      "doctorQuestions": ["How often should HbA1c be checked for me?", "Could anything about my blood affect this result?"],
+      "sources": [{ "title": "Hemoglobin A1C (HbA1c) Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/hemoglobin-a1c-hba1c-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "cholesterol-total", "title": "Total cholesterol", "loinc": "2093-3",
+      "aliases": ["total cholesterol", "cholesterol, total", "cholesterol total", "cholesterol"],
+      "measures": "Total cholesterol is the overall amount of cholesterol in your blood. Cholesterol is a waxy fat your body uses to build cells and make hormones.",
+      "whyVaries": ["Diet, activity, weight, genetics and some medicines affect cholesterol.", "Total cholesterol includes both LDL and HDL."],
+      "limitations": ["The total alone doesn't show the balance between LDL and HDL.", "Heart risk depends on many factors besides cholesterol."],
+      "doctorQuestions": ["How do my LDL and HDL results fit together?", "Which other factors matter for my heart health?"],
+      "sources": [{ "title": "Cholesterol Levels", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/cholesterol-levels/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "ldl", "title": "LDL cholesterol", "loinc": "13457-7",
+      "aliases": ["ldl", "low density", "low-density"],
+      "measures": "LDL is often called 'bad' cholesterol because high amounts can build up in the walls of blood vessels.",
+      "whyVaries": ["Diet, activity, weight, genetics and some medicines affect LDL.", "Some labs calculate LDL from other values instead of measuring it directly."],
+      "limitations": ["What counts as a good target can depend on your personal health history, not just the printed range."],
+      "doctorQuestions": ["What LDL level makes sense for me personally?", "Was my LDL measured or calculated?"],
+      "sources": [{ "title": "Cholesterol Levels", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/cholesterol-levels/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "hdl", "title": "HDL cholesterol", "loinc": "2085-9",
+      "aliases": ["hdl", "high density", "high-density"],
+      "measures": "HDL is often called 'good' cholesterol because it helps carry cholesterol away from blood vessels to the liver.",
+      "whyVaries": ["Activity, weight, smoking, genetics and some medicines affect HDL."],
+      "limitations": ["HDL is one part of a bigger picture of heart health."],
+      "doctorQuestions": ["How does my HDL fit with my other cholesterol results?"],
+      "sources": [{ "title": "Cholesterol Levels", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/cholesterol-levels/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "triglycerides", "title": "Triglycerides", "loinc": "2571-8",
+      "aliases": ["triglyceride", "trig"],
+      "measures": "Triglycerides are a type of fat in your blood that your body uses to store energy.",
+      "whyVaries": ["Levels rise after eating, so fasting status matters.", "Alcohol, diet, weight and some medicines affect them."],
+      "limitations": ["A non-fasting result can be higher than a fasting one."],
+      "doctorQuestions": ["Was I supposed to fast for this test?", "Should it be repeated?"],
+      "sources": [{ "title": "Triglycerides Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/triglycerides-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "creatinine", "title": "Creatinine", "loinc": "2160-0",
+      "aliases": ["creatinine", "crea"],
+      "measures": "Creatinine is a waste product from normal muscle activity. Your kidneys filter it out of your blood.",
+      "whyVaries": ["Muscle mass, age, sex and body size affect it.", "Intense exercise, eating a lot of meat, dehydration and some medicines can raise it."],
+      "limitations": ["Creatinine alone doesn't fully describe kidney function; eGFR is calculated from it."],
+      "doctorQuestions": ["What does my eGFR show alongside this?", "Could hydration or exercise have affected it?"],
+      "sources": [{ "title": "Creatinine Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/creatinine-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "egfr", "title": "eGFR", "loinc": null,
+      "aliases": ["egfr", "gfr", "glomerular"],
+      "measures": "eGFR is an estimate of how well your kidneys filter blood. It's calculated from creatinine plus details like age.",
+      "whyVaries": ["Because it's calculated, anything that affects creatinine affects eGFR.", "Different labs may use different formulas."],
+      "limitations": ["It's an estimate and is less exact at the higher end."],
+      "doctorQuestions": ["Which formula was used for my eGFR?", "Should we track this over time?"],
+      "sources": [{ "title": "Glomerular Filtration Rate (GFR) Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/glomerular-filtration-rate-gfr-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "tsh", "title": "TSH", "loinc": "3016-3",
+      "aliases": ["tsh", "thyroid stimulating", "thyrotropin"],
+      "measures": "TSH is a hormone from the pituitary gland in your brain that tells your thyroid how much thyroid hormone to make.",
+      "whyVaries": ["It can vary with time of day, illness, pregnancy and some medicines or supplements such as biotin."],
+      "limitations": ["TSH is often read together with thyroid hormones such as free T4."],
+      "doctorQuestions": ["Do I need other thyroid tests to understand this?", "Could any medicines or supplements affect this result?"],
+      "sources": [{ "title": "TSH (Thyroid-Stimulating Hormone) Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/tsh-thyroid-stimulating-hormone-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "alt", "title": "ALT", "loinc": "1742-6",
+      "aliases": ["alt", "alanine", "sgpt", "gpt"],
+      "measures": "ALT is an enzyme found mostly in the liver. Its level in the blood is one signal about liver cells.",
+      "whyVaries": ["Strenuous exercise, some medicines, alcohol and weight can affect it."],
+      "limitations": ["ALT alone doesn't identify a cause; it's read with other liver tests."],
+      "doctorQuestions": ["How does my ALT fit with my other liver results?", "Could medicines or exercise have affected it?"],
+      "sources": [{ "title": "ALT Blood Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/alt-blood-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "ast", "title": "AST", "loinc": "1920-8",
+      "aliases": ["ast", "aspartate", "sgot", "got"],
+      "measures": "AST is an enzyme found in the liver, heart and muscles.",
+      "whyVaries": ["Muscle injury or hard exercise can raise it, not only the liver.", "Some medicines and alcohol can affect it."],
+      "limitations": ["Because AST comes from several organs, it's read alongside ALT and other tests."],
+      "doctorQuestions": ["How does my AST compare with my ALT?"],
+      "sources": [{ "title": "AST Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/ast-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "sodium", "title": "Sodium", "loinc": "2951-2",
+      "aliases": ["sodium", "na"],
+      "measures": "Sodium is an electrolyte (a mineral with an electric charge) that helps control fluid balance and nerve and muscle function.",
+      "whyVaries": ["How much water you drink or lose, some medicines and hormones affect it."],
+      "limitations": ["Sodium mostly reflects water balance, not just salt intake."],
+      "doctorQuestions": ["Could fluids or medicines explain this result?"],
+      "sources": [{ "title": "Sodium Blood Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/sodium-blood-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "potassium", "title": "Potassium", "loinc": "2823-3",
+      "aliases": ["potassium", "k"],
+      "measures": "Potassium is an electrolyte that's important for your heart rhythm, nerves and muscles.",
+      "whyVaries": ["Some medicines, kidney function and diet affect it.", "If blood cells break open in the sample tube, the result can look falsely high."],
+      "limitations": ["A surprising result is sometimes repeated to rule out a sample issue."],
+      "doctorQuestions": ["Should this potassium result be repeated?", "Could any of my medicines affect it?"],
+      "sources": [{ "title": "Potassium Blood Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/potassium-blood-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "vitamin-d", "title": "Vitamin D (25-hydroxy)", "loinc": "1989-3",
+      "aliases": ["vitamin d", "25-oh", "25 oh", "25-hydroxy", "calcidiol"],
+      "measures": "This test measures the main form of vitamin D in your blood. Vitamin D helps your body absorb calcium and keep bones healthy.",
+      "whyVaries": ["Sun exposure, season, skin tone, diet, supplements and body weight all play a role."],
+      "limitations": ["Labs and guidelines don't all agree on the ideal level.", "Units differ between labs (ng/mL or nmol/L)."],
+      "doctorQuestions": ["What level is right for me?", "Should I recheck this after any changes?"],
+      "sources": [{ "title": "Vitamin D Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/vitamin-d-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "ferritin", "title": "Ferritin", "loinc": "2276-4",
+      "aliases": ["ferritin"],
+      "measures": "Ferritin is a protein that stores iron. The level in your blood gives a picture of your body's iron stores.",
+      "whyVaries": ["Inflammation and infection can raise ferritin even when iron stores are low.", "Diet, blood loss and some conditions affect it."],
+      "limitations": ["Ferritin is often read with other iron tests and markers of inflammation."],
+      "doctorQuestions": ["Do I need other iron tests to understand this?", "Could inflammation be affecting this result?"],
+      "sources": [{ "title": "Ferritin Blood Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/ferritin-blood-test/", "license": "Public domain (U.S. government)" }]
+    },
+    {
+      "id": "crp", "title": "C-reactive protein (CRP)", "loinc": "1988-5",
+      "aliases": ["crp", "c-reactive", "c reactive", "hs-crp"],
+      "measures": "CRP is a protein your liver makes. It rises in the blood when there's inflammation somewhere in the body.",
+      "whyVaries": ["Infections, injuries, recent illness and some long-term conditions can raise it."],
+      "limitations": ["CRP shows that inflammation may be present but not where or why.", "Standard CRP and high-sensitivity CRP (hs-CRP) are used for different purposes."],
+      "doctorQuestions": ["Was this a standard CRP or hs-CRP?", "Could a recent illness explain this?"],
+      "sources": [{ "title": "C-Reactive Protein (CRP) Test", "publisher": "MedlinePlus (NLM)", "url": "https://medlineplus.gov/lab-tests/c-reactive-protein-crp-test/", "license": "Public domain (U.S. government)" }]
+    }
+  ]
+}

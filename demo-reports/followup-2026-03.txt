@@ -1,0 +1,16 @@
+Sample Diagnostics Lab
+Patient: Jane Example (synthetic)
+Collected date: 2026-03-14
+Test Result Units Reference Range
+Hemoglobin 11.2 L g/dL 12.0 - 15.5
+White Blood Cells 6.4 10^3/uL 4.0 - 11.0
+Platelets 412 H 10^3/uL 150 - 400
+Glucose, fasting 92 mg/dL 70 - 99
+HbA1c 5.4 % < 5.7
+LDL Cholesterol 142 mg/dL < 130 H
+HDL Cholesterol 58 mg/dL > 40
+Creatinine 0.9 mg/dL
+TSH 2.1 mIU/L 0.4 - 4.0
+CRP < 0.5 mg/L < 5.0
+Vitamin D 18 ng/mL 30 - 100 L
+Hepatitis B surface antigen Negative

@@ -1,0 +1,8 @@
+Sample Diagnostics Lab
+Patient: Sam Placeholder (synthetic)
+Collected date: 2026-04-02
+Test Result Units Reference Range
+Sodium 134 L mmol/L 135 - 145
+Potassium 6.4 HH mmol/L 3.5 - 5.1 CRITICAL
+Creatinine 1.1 mg/dL 0.6 - 1.2
+Glucose 88 mg/dL 70 - 99

@@ -1,8 +1,0 @@
-google-genai
-langchain-core
-langchain-ollama
-langgraph
-fastapi
-uvicorn[standard]
-pypdf
-langdetect
